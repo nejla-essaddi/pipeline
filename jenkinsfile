@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                script {
+                    docker.build("my-app-image")
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    docker.image("my-app-image").inside {
+                        sh 'echo "Running tests..."'
+                        // Exemple de commande de test
+                        sh 'npm test'
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    sh 'echo "Deploying application..."'
+                    // Exemple de commande de déploiement
+                    docker.run("my-app-image", "-p 80:80 -d")
+                }
+            }
+        }
+    }
+}
